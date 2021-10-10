@@ -1,3 +1,4 @@
+import 'package:tutorial_flutter_minimalist_authentication/exceptions/access_token_exception.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/account/renew_access_token.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/account/sign_in.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/api/business_error.dart';
@@ -26,9 +27,9 @@ class FakeAccountAPIService implements AccountService {
       throw BusinessError(
           message: "Invalid Sign In", businessError: businessCode);
     } on BusinessError catch (error) {
-      rethrow;
+      throw error;
     } catch (error) {
-      throw Error();
+      throw Exception();
     }
   }
 
@@ -40,6 +41,13 @@ class FakeAccountAPIService implements AccountService {
 
   @override
   Future<bool> verifyToken({required String accessToken}) async {
-    return true;
+    try {
+      return true;
+    } on AccessTokenException catch (error) {
+      //Here you can throw AccessTokenException if access token either expired or invalid
+      throw error;
+    } catch (error) {
+      throw error;
+    }
   }
 }

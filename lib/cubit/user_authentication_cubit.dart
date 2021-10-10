@@ -69,9 +69,11 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         emit(UserAuthenticated(authenticationData: authData));
       }
     } on RefreshTokenException catch (exception) {
+      //Handle when refresh token is either expired or was deleted from device
       emit(const UserUnauthenticated());
     } catch (e) {
-      emit(const UserAuthenticationError(message: ""));
+      emit(const UserAuthenticationError(
+          message: "Couldn't not authenticate,try again"));
     }
   }
 
@@ -98,6 +100,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
 
   Future<void> logoutUser() async {
     try {
+      //Delets all stored tokens and session data on device
       _flutterSecureStorage.deleteAll();
       emit(const UserUnauthenticated());
     } catch (error) {
