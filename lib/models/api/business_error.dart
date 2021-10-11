@@ -1,7 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'business_error.g.dart';
-
 @JsonSerializable()
 class BusinessError {
   @JsonKey(name: "message")
@@ -12,9 +10,4 @@ class BusinessError {
     required this.message,
     this.businessError,
   });
-
-  factory BusinessError.fromJson(Map<String, dynamic> json) =>
-      _$BusinessErrorFromJson(json);
-
-  Map<String, dynamic> toJson() => _$BusinessErrorToJson(this);
 }
