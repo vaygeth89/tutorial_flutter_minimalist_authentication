@@ -3,9 +3,9 @@ import 'package:tutorial_flutter_minimalist_authentication/models/account/renew_
 import 'package:tutorial_flutter_minimalist_authentication/models/account/sign_in.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/api/business_error.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/session/authentication_data.dart';
-import 'package:tutorial_flutter_minimalist_authentication/repositories/api/account_service.dart';
+import 'package:tutorial_flutter_minimalist_authentication/repositories/api/account_repository.dart';
 
-class FakeAccountAPIService implements AccountService {
+class FakeAccountAPIRepository implements AccountRepository {
   final _fakeAuthData = AuthenticationData(
       accessToken: "fakeAccessToken",
       refreshToken: "fakeRefreshToken",

@@ -8,16 +8,16 @@ import 'package:tutorial_flutter_minimalist_authentication/exceptions/refresh_to
 import 'package:tutorial_flutter_minimalist_authentication/models/account/renew_access_token.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/account/sign_in.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/session/authentication_data.dart';
-import 'package:tutorial_flutter_minimalist_authentication/repositories/api/account_service.dart';
+import 'package:tutorial_flutter_minimalist_authentication/repositories/api/account_repository.dart';
 
 part 'user_authentication_state.dart';
 
 class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
-  final AccountService _accountService;
+  final AccountRepository _accountRepository;
   final FlutterSecureStorage _flutterSecureStorage =
       const FlutterSecureStorage();
 
-  UserAuthenticationCubit(this._accountService)
+  UserAuthenticationCubit(this._accountRepository)
       : super(const UserAuthenticationInitial()) {
     validateAuthentication();
   }
@@ -25,7 +25,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
   Future<void> signInUser(SignIn signInInput) async {
     try {
       emit(const UserAuthenticating());
-      final authData = await _accountService.signIn(signIn: signInInput);
+      final authData = await _accountRepository.signIn(signIn: signInInput);
       await _storeAuthData(authData);
       emit(UserAuthenticated(authenticationData: authData));
     } on BusinessException catch (error) {
@@ -50,7 +50,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         throw AccessTokenException(message: "Token not found");
       }
       final isValidToken =
-          await _accountService.verifyToken(accessToken: accessToken);
+          await _accountRepository.verifyToken(accessToken: accessToken);
       if (isValidToken) {
         final authData = await _getAuthDataFromDevice();
         emit(UserAuthenticated(authenticationData: authData));
@@ -63,7 +63,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         await _flutterSecureStorage.deleteAll();
         emit(const UserUnauthenticated());
       } else {
-        var authData = await _accountService.renewAccessToken(
+        var authData = await _accountRepository.renewAccessToken(
             renewAccessToken: RenewAccessToken(refreshToken: refreshToken));
         await _storeAuthData(authData);
         emit(UserAuthenticated(authenticationData: authData));
