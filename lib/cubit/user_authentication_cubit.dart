@@ -31,7 +31,10 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
     } on BusinessException catch (error) {
       //Handle when invalid sign in here
       if (error.businessError.businessError == 123) {
-        emit(const UserAuthenticationEmailNotConfirmed());
+        emit(const UserAuthenticationInvalidCredentials());
+      } else if (error.businessError.businessError == 321) {
+        //if our API retuned 321 we map it as if the user email wasn't verified
+        emit(UserAuthenticationEmailNotConfirmed());
       } else {
         emit(UserAuthenticationError(message: error.businessError.message));
       }

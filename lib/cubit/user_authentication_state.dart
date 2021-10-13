@@ -22,6 +22,10 @@ class UserUnauthenticated extends UserAuthenticationState {
   const UserUnauthenticated();
 }
 
+class UserAuthenticationInvalidCredentials extends UserAuthenticationState {
+  const UserAuthenticationInvalidCredentials();
+}
+
 class UserAuthenticationError extends UserAuthenticationState {
   final String message;
 

@@ -20,12 +20,12 @@ class FakeAccountAPIRepository implements AccountRepository {
       if (signIn.email == _fakeEmail && signIn.password == _fakePassword) {
         return _fakeAuthData;
       }
-      //you make your API return special business code for different error
-      //for example if business code is 123 when user sign up before but didn't verify his email
-      //then the
       final businessCode = 123;
-      throw BusinessError(
-          message: "Invalid Sign In", businessError: businessCode);
+      //you make your API return special business code for different error
+      //for example if business code is 123 when user try to sign in and it was invalid credentials
+      //or for example if business code is 321 when user sign up before but didn't verify his email
+
+      throw BusinessError(message: "Invalid Sign In", businessError: 123);
     } on BusinessError catch (error) {
       throw error;
     } catch (error) {
