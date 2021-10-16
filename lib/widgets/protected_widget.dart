@@ -21,7 +21,12 @@ class ProtectedWidget extends StatelessWidget {
         builder: (context, authState) {
       if (authState is UserAuthenticated) {
         return onAuthenticated(context, authState.authenticationData);
+      } 
+      //You can remove this auth state in-case you don't want to 
+      else if (authState is UserAuthenticating) {
+        return onAuthenticatingChild;
       }
+
       return onUnauthenticatedChild;
     }, listener: (context, authState) {
       //Todo if want to fire events upon changing states do it here
