@@ -25,7 +25,7 @@ class ProtectedWidget extends StatelessWidget {
       //for simplicity this widget will focus on protecting the child widget
       return onUnauthenticatedChild;
     }, listener: (context, authState) {
-      //Todo if want to fire events upon changing states do it here
+      //note if want to fire events upon changing states do it here
       //like showing snackbar when sign in succeeded or failed...etc
     });
   }
