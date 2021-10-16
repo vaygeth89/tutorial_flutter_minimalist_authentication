@@ -6,12 +6,11 @@ import 'package:tutorial_flutter_minimalist_authentication/models/session/authen
 
 class ProtectedWidget extends StatelessWidget {
   final Widget Function(BuildContext, AuthenticationData) onAuthenticated;
-  final Widget onAuthenticatingChild;
+
   final Widget onUnauthenticatedChild;
   const ProtectedWidget(
       {Key? key,
       required this.onAuthenticated,
-      required this.onAuthenticatingChild,
       required this.onUnauthenticatedChild})
       : super(key: key);
 
@@ -21,12 +20,9 @@ class ProtectedWidget extends StatelessWidget {
         builder: (context, authState) {
       if (authState is UserAuthenticated) {
         return onAuthenticated(context, authState.authenticationData);
-      } 
-      //You can remove this auth state in-case you don't want to 
-      else if (authState is UserAuthenticating) {
-        return onAuthenticatingChild;
       }
-
+      //note you can add extra handling for different user states
+      //for simplicity this widget will focus on protecting the child widget
       return onUnauthenticatedChild;
     }, listener: (context, authState) {
       //Todo if want to fire events upon changing states do it here

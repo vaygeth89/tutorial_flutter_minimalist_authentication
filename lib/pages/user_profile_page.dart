@@ -38,9 +38,6 @@ class UserProfilePage extends StatelessWidget {
             ),
           );
         },
-        onAuthenticatingChild: const Center(
-          child: CircularProgressIndicator(),
-        ),
         onUnauthenticatedChild: const SignInPage());
   }
 }
