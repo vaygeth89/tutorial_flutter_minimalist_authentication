@@ -53,7 +53,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         throw AccessTokenException(message: "Token not found");
       }
       final isValidToken =
-          await _accountRepository.verifyToken(accessToken: accessToken);
+          await _accountRepository.verifyToken(accessToken: accessToken + "as");
       if (isValidToken) {
         final authData = await _getAuthDataFromDevice();
         emit(UserAuthenticated(authenticationData: authData));
@@ -61,7 +61,30 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         emit(const UserUnauthenticated());
       }
     } on AccessTokenException catch (accessTokenException) {
-      var refreshToken = await _flutterSecureStorage.read(key: "accessToken");
+      // var refreshToken = await _flutterSecureStorage.read(key: "refreshToken");
+      // if (refreshToken == null) {
+      //   await _flutterSecureStorage.deleteAll();
+      //   emit(const UserUnauthenticated());
+      // } else {
+      //   var authData = await _accountRepository.renewAccessToken(
+      //       renewAccessToken: RenewAccessToken(refreshToken: refreshToken));
+      //   await _storeAuthData(authData);
+      //   emit(UserAuthenticated(authenticationData: authData));
+      // }
+      await _refreshToken();
+    } on RefreshTokenException catch (exception) {
+      //Handle when refresh token is either expired or was deleted from device
+      await _flutterSecureStorage.deleteAll();
+      emit(const UserUnauthenticated());
+    } catch (e) {
+      emit(const UserAuthenticationError(
+          message: "Couldn't not authenticate,try again"));
+    }
+  }
+
+  Future<void> _refreshToken() async {
+    try {
+      var refreshToken = await _flutterSecureStorage.read(key: "refreshToken");
       if (refreshToken == null) {
         await _flutterSecureStorage.deleteAll();
         emit(const UserUnauthenticated());
@@ -71,10 +94,10 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         await _storeAuthData(authData);
         emit(UserAuthenticated(authenticationData: authData));
       }
-    } on RefreshTokenException catch (exception) {
-      //Handle when refresh token is either expired or was deleted from device
+    } on RefreshTokenException catch (error) {
+      await _flutterSecureStorage.deleteAll();
       emit(const UserUnauthenticated());
-    } catch (e) {
+    } catch (error) {
       emit(const UserAuthenticationError(
           message: "Couldn't not authenticate,try again"));
     }
