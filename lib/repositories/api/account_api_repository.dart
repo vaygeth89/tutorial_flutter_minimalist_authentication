@@ -1,0 +1,70 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:tutorial_flutter_minimalist_authentication/constants/constants.dart';
+import 'package:tutorial_flutter_minimalist_authentication/exceptions/business_exception.dart';
+import 'package:tutorial_flutter_minimalist_authentication/models/api/business_error.dart';
+import 'package:tutorial_flutter_minimalist_authentication/models/session/authentication_data.dart';
+import 'package:tutorial_flutter_minimalist_authentication/models/account/sign_in.dart';
+import 'package:tutorial_flutter_minimalist_authentication/models/account/renew_access_token.dart';
+import 'package:tutorial_flutter_minimalist_authentication/repositories/api/account_repository.dart';
+
+class ApiRepositoryBase {
+  late Dio _dio;
+  static final String bearerTokenHeader = "Bearer ";
+  Duration timeout = const Duration(seconds: 8);
+
+  ApiRepositoryBase({required String baseURL}) {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseURL,
+        headers: {
+          HttpHeaders.contentTypeHeader: ContentType.json.value,
+        },
+      ),
+    );
+  }
+}
+
+class AccountApiRepository extends ApiRepositoryBase
+    implements AccountRepository {
+  AccountApiRepository({String baseURL = accountAPIURL_v1})
+      : super(baseURL: accountAPIURL_v1);
+  @override
+  Future<AuthenticationData> renewAccessToken(
+      {required RenewAccessToken renewAccessToken,
+      String routePath = "refresh-token"}) async {
+    // TODO: implement renewAccessToken
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<AuthenticationData> signIn({
+    required SignIn signIn,
+    String routePath = "authenticate",
+  }) async {
+    try {
+      var result = await super
+          ._dio
+          .post(routePath, data: signIn.toJson())
+          .timeout(super.timeout);
+      if (result.statusCode == 200) {
+        return AuthenticationData.fromJson(result.data);
+      }
+      throw DioError(requestOptions: result.requestOptions);
+    } on DioError catch (error) {
+      var businessError = BusinessError.fromJson(error.response?.data);
+      throw BusinessException(businessError,
+          statusCode: error.response?.statusCode);
+    } catch (error) {
+      throw Error();
+    }
+  }
+
+  @override
+  Future<bool> verifyToken(
+      {required String accessToken, String routePath = "verify-token"}) async {
+    // TODO: implement verifyToken
+    throw UnimplementedError();
+  }
+}
