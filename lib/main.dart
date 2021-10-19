@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutorial_flutter_minimalist_authentication/cubit/user_authentication_cubit.dart';
-import 'package:tutorial_flutter_minimalist_authentication/repositories/api/fake_account_api_repository.dart';
+import 'package:tutorial_flutter_minimalist_authentication/repositories/api/account_api_repository.dart';
 import 'package:tutorial_flutter_minimalist_authentication/routes/routes.dart';
 
 void main() {
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<UserAuthenticationCubit>(
               lazy: false,
               create: (_) => UserAuthenticationCubit(
-                    FakeAccountAPIRepository(),
+                    AccountApiRepository(),
                   )),
         ],
         child: MaterialApp(

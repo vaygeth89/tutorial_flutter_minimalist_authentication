@@ -30,13 +30,6 @@ class AccountApiRepository extends ApiRepositoryBase
     implements AccountRepository {
   AccountApiRepository({String baseURL = accountAPIURL_v1})
       : super(baseURL: accountAPIURL_v1);
-  @override
-  Future<AuthenticationData> renewAccessToken(
-      {required RenewAccessToken renewAccessToken,
-      String routePath = "refresh-token"}) async {
-    // TODO: implement renewAccessToken
-    throw UnimplementedError();
-  }
 
   @override
   Future<AuthenticationData> signIn({
@@ -64,7 +57,45 @@ class AccountApiRepository extends ApiRepositoryBase
   @override
   Future<bool> verifyToken(
       {required String accessToken, String routePath = "verify-token"}) async {
-    // TODO: implement verifyToken
-    throw UnimplementedError();
+    try {
+      var result = await super._dio.get(routePath,
+          queryParameters: {"accessToken": accessToken}).timeout(super.timeout);
+      if (result.statusCode == 200) {
+        return true;
+      }
+      throw DioError(requestOptions: result.requestOptions);
+    } on DioError catch (error) {
+      var businessError = BusinessError.fromJson(error.response?.data);
+      throw BusinessException(businessError,
+          statusCode: error.response?.statusCode);
+    } catch (error) {
+      throw Error();
+    }
+  }
+
+  //I posted refresh token in body as post just to
+  //demonstrate the different cases for dio htt ppost, get example
+  //how you do it is purely your deisgn whether on url as queryparam
+  //or post it in the http body
+  @override
+  Future<AuthenticationData> renewAccessToken(
+      {required RenewAccessToken renewAccessToken,
+      String routePath = "refresh-token"}) async {
+    try {
+      var result = await super
+          ._dio
+          .post(routePath, data: renewAccessToken.toJson())
+          .timeout(super.timeout);
+      if (result.statusCode == 200) {
+        return AuthenticationData.fromJson(result.data);
+      }
+      throw DioError(requestOptions: result.requestOptions);
+    } on DioError catch (error) {
+      var businessError = BusinessError.fromJson(error.response?.data);
+      throw BusinessException(businessError,
+          statusCode: error.response?.statusCode);
+    } catch (error) {
+      throw Error();
+    }
   }
 }
