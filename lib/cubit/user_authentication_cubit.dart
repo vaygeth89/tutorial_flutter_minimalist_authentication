@@ -61,16 +61,6 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         emit(const UserUnauthenticated());
       }
     } on AccessTokenException catch (accessTokenException) {
-      // var refreshToken = await _flutterSecureStorage.read(key: "refreshToken");
-      // if (refreshToken == null) {
-      //   await _flutterSecureStorage.deleteAll();
-      //   emit(const UserUnauthenticated());
-      // } else {
-      //   var authData = await _accountRepository.renewAccessToken(
-      //       renewAccessToken: RenewAccessToken(refreshToken: refreshToken));
-      //   await _storeAuthData(authData);
-      //   emit(UserAuthenticated(authenticationData: authData));
-      // }
       await _refreshToken();
     } on RefreshTokenException catch (exception) {
       //Handle when refresh token is either expired or was deleted from device
