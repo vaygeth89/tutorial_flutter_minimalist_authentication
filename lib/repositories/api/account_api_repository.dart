@@ -33,6 +33,26 @@ class AccountApiRepository extends ApiRepositoryBase
   AccountApiRepository({String baseURL = accountAPIURL_v1})
       : super(baseURL: accountAPIURL_v1);
 
+  /*
+    The SignIn web service should accept Post operation with input
+      {
+        "email":"your email",
+        "password":"your password"
+      }
+      and returns success (HTTP Status code ==200) with following data
+      {
+        "accessToken":"accesss token here",
+        "refreshToken":"refresh token here",
+        "userId": 1,
+      }
+
+    For failure condition (NOT HTTP Status code 200)you may want to return
+    {
+      "message": "your error message, for instance invalid credentials"
+      "businessError": 123
+    }
+
+  */
   @override
   Future<AuthenticationData> signIn({
     required SignIn signIn,
@@ -56,6 +76,19 @@ class AccountApiRepository extends ApiRepositoryBase
     }
   }
 
+  /*
+    The VerifyToken web service should accept Get operation with query parameters accessToken
+    For example
+    https://{your.dns}/{api-endpoint}?accessToken={my access token}
+      
+    For failure condition (NOT HTTP Status code 200) you may want to return
+    You can use HTTP Status code 400 with following response
+    {
+      "message": "access token expired, or invalid"
+      "businessError": {your desired error code}
+    }
+
+  */
   @override
   Future<bool> verifyToken(
       {required String accessToken, String routePath = "verify-token"}) async {
@@ -79,10 +112,25 @@ class AccountApiRepository extends ApiRepositoryBase
     }
   }
 
-  //I posted refresh token in body as post just to
-  //demonstrate the different cases for dio htt ppost, get example
-  //how you do it is purely your deisgn whether on url as queryparam
-  //or post it in the http body
+  /*
+    The RenewAccessToken web service should accept Post operation with input
+      {
+        "refreshToken":"my refresh token"
+      }
+      and returns success (HTTP Status code ==200) with following data
+      {
+        "accessToken":"accesss token here",
+        "refreshToken":"refresh token here",
+        "userId": 1,
+      }
+
+    You can use HTTP Status code 400 with following response
+    {
+      "message": "your error message, for instance invalid credentials"
+      "businessError": 123
+    }
+
+  */
   @override
   Future<AuthenticationData> renewAccessToken(
       {required RenewAccessToken renewAccessToken,
