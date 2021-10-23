@@ -53,7 +53,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
         throw AccessTokenException(message: "Token not found");
       }
       final isValidToken =
-          await _accountRepository.verifyToken(accessToken: accessToken + "as");
+          await _accountRepository.verifyToken(accessToken: accessToken);
       if (isValidToken) {
         final authData = await _getAuthDataFromDevice();
         emit(UserAuthenticated(authenticationData: authData));
@@ -97,7 +97,7 @@ class UserAuthenticationCubit extends Cubit<UserAuthenticationState> {
     } on RefreshTokenException catch (error) {
       await _flutterSecureStorage.deleteAll();
       emit(const UserUnauthenticated());
-    } catch (error) {
+    } on Exception catch (error) {
       emit(const UserAuthenticationError(
           message: "Couldn't not authenticate,try again"));
     }
