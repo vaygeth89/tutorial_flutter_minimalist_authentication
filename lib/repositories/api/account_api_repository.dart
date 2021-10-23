@@ -13,7 +13,7 @@ import 'package:tutorial_flutter_minimalist_authentication/repositories/api/acco
 
 class ApiRepositoryBase {
   late Dio _dio;
-  static final String bearerTokenHeader = "Bearer ";
+  static const String bearerTokenHeader = "Bearer ";
   Duration timeout = const Duration(seconds: 8);
 
   ApiRepositoryBase({required String baseURL}) {
