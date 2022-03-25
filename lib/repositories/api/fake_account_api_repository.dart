@@ -1,4 +1,5 @@
 import 'package:tutorial_flutter_minimalist_authentication/exceptions/access_token_exception.dart';
+import 'package:tutorial_flutter_minimalist_authentication/exceptions/business_exception.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/account/renew_access_token.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/account/sign_in.dart';
 import 'package:tutorial_flutter_minimalist_authentication/models/api/business_error.dart';
@@ -27,7 +28,7 @@ class FakeAccountAPIRepository implements AccountRepository {
 
       throw BusinessError(message: "Invalid Sign In", businessError: 123);
     } on BusinessError catch (error) {
-      throw error;
+      throw BusinessException(error);
     } catch (error) {
       throw Exception();
     }
